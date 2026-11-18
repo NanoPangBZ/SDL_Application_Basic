@@ -19,6 +19,15 @@ set(SDL_INSTALL OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(third_party/SDL3 EXCLUDE_FROM_ALL)
 
+# SDL3_ttf 使用随源码提供的 FreeType，避免目标机器依赖字体库 DLL。
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+set(SDLTTF_VENDORED ON CACHE BOOL "" FORCE)
+set(SDLTTF_HARFBUZZ OFF CACHE BOOL "" FORCE)
+set(SDLTTF_PLUTOSVG OFF CACHE BOOL "" FORCE)
+set(SDLTTF_SAMPLES OFF CACHE BOOL "" FORCE)
+set(SDLTTF_INSTALL OFF CACHE BOOL "" FORCE)
+add_subdirectory(third_party/SDL3_ttf EXCLUDE_FROM_ALL)
+
 add_executable(${PROJECT_NAME}
     src/main.c
 )
@@ -26,6 +35,13 @@ add_executable(${PROJECT_NAME}
 # 静态链接 SDL3（符号打进可执行文件）
 target_link_libraries(${PROJECT_NAME} PRIVATE
     SDL3::SDL3-static
+    SDL3_ttf::SDL3_ttf-static
+)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_CURRENT_SOURCE_DIR}/resource/font/NotoSansCJK-Regular.ttc"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/NotoSansCJK-Regular.ttc"
 )
 
 # Unix 上 sin/sqrt 需要链接 libm
