@@ -2,6 +2,8 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <math.h>
+#include <stdint.h>
+#include "font_data.h"
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 500
@@ -31,7 +33,7 @@ int main(int argc, char *argv[])
     SDL_Texture *textures[SDL_arraysize(lines)] = {0};
     SDL_FRect rects[SDL_arraysize(lines)] = {0};
     TTF_Font *font = NULL;
-    char *font_path = NULL;
+    SDL_IOStream *font_io = NULL;
     bool running = true;
     int exit_code = 1;
     float total_height = 0.0f;
@@ -55,12 +57,15 @@ int main(int argc, char *argv[])
         goto cleanup;
     }
 
-    if (SDL_asprintf(&font_path, "%sNotoSansCJK-Regular.ttc", SDL_GetBasePath()) < 0) {
-        SDL_Log("Font path allocation failed: %s", SDL_GetError());
+    font_io = SDL_IOFromConstMem(g_font_data,
+                                 (size_t)((uintptr_t)g_font_data_end - (uintptr_t)g_font_data));
+    if (!font_io) {
+        SDL_Log("Font memory stream failed: %s", SDL_GetError());
         goto cleanup;
     }
-    if (!font_path || !(font = TTF_OpenFont(font_path, FONT_SIZE))) {
-        SDL_Log("TTF_OpenFont failed: %s", SDL_GetError());
+    font = TTF_OpenFontIO(font_io, false, FONT_SIZE);
+    if (!font) {
+        SDL_Log("TTF_OpenFontIO failed: %s", SDL_GetError());
         goto cleanup;
     }
 
@@ -116,7 +121,7 @@ cleanup:
         SDL_DestroyTexture(textures[i]);
     }
     TTF_CloseFont(font);
-    SDL_free(font_path);
+    SDL_CloseIO(font_io);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     TTF_Quit();

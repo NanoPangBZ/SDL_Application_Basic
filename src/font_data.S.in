@@ -1,0 +1,7 @@
+@FONT_SECTION@
+.balign 16
+.globl @FONT_SYMBOL_PREFIX@g_font_data
+.globl @FONT_SYMBOL_PREFIX@g_font_data_end
+@FONT_SYMBOL_PREFIX@g_font_data:
+    .incbin "@FONT_FILE_ASM@"
+@FONT_SYMBOL_PREFIX@g_font_data_end:
