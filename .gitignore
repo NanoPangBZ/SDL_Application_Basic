@@ -1,0 +1,56 @@
+# 构建输出
+build/
+cmake-build-*/
+out/
+install/
+
+# CMake 生成文件（若在源码树内配置）
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+compile_commands.json
+CTestTestfile.cmake
+install_manifest.txt
+_deps/
+
+# 编译产物
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+*.exe
+*.pdb
+*.ilk
+*.exp
+*.idb
+
+# IDE / 编辑器
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.ncb
+*.aps
+*.sln.docstates
+*.VC.db
+*.VC.opendb
+compile_flags.txt
+.clangd/
+.ccls-cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 系统文件
+.DS_Store
+Thumbs.db
+Desktop.ini
