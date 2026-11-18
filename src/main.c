@@ -2,8 +2,9 @@
 #include <SDL3/SDL_main.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <math.h>
-#include <stdint.h>
-#include "font_data.h"
+#include "file_embed.h"
+
+FILE_EMBED_DECLARE(font);
 
 #define WINDOW_WIDTH 800
 #define WINDOW_HEIGHT 500
@@ -57,8 +58,7 @@ int main(int argc, char *argv[])
         goto cleanup;
     }
 
-    font_io = SDL_IOFromConstMem(g_font_data,
-                                 (size_t)((uintptr_t)g_font_data_end - (uintptr_t)g_font_data));
+    font_io = SDL_IOFromConstMem(FILE_EMBED_DATA(font), FILE_EMBED_SIZE(font));
     if (!font_io) {
         SDL_Log("Font memory stream failed: %s", SDL_GetError());
         goto cleanup;

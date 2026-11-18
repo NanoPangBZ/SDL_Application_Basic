@@ -28,27 +28,13 @@ set(SDLTTF_SAMPLES OFF CACHE BOOL "" FORCE)
 set(SDLTTF_INSTALL OFF CACHE BOOL "" FORCE)
 add_subdirectory(third_party/SDL3_ttf EXCLUDE_FROM_ALL)
 
-set(FONT_FILE "${CMAKE_CURRENT_SOURCE_DIR}/resource/font/NotoSansCJK-Regular.ttc")
-file(TO_CMAKE_PATH "${FONT_FILE}" FONT_FILE_ASM)
-if(APPLE)
-    set(FONT_SYMBOL_PREFIX "_")
-    set(FONT_SECTION ".const")
-elseif(WIN32)
-    set(FONT_SYMBOL_PREFIX "")
-    set(FONT_SECTION ".section .rdata,\"dr\"")
-else()
-    set(FONT_SYMBOL_PREFIX "")
-    set(FONT_SECTION ".section .rodata")
-endif()
-set(EMBEDDED_FONT_SOURCE "${CMAKE_CURRENT_BINARY_DIR}/generated/font_data.S")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/font_data.S.in"
-               "${EMBEDDED_FONT_SOURCE}" @ONLY)
-set_source_files_properties("${EMBEDDED_FONT_SOURCE}" PROPERTIES OBJECT_DEPENDS "${FONT_FILE}")
-
 add_executable(${PROJECT_NAME}
     src/main.c
-    "${EMBEDDED_FONT_SOURCE}"
 )
+
+include(src/file_embed/EmbedFile.cmake)
+embed_file(${PROJECT_NAME} font "resource/font/NotoSansCJK-Regular.ttc")
+target_include_directories(${PROJECT_NAME} PRIVATE src/file_embed)
 
 # 静态链接 SDL3（符号打进可执行文件）
 target_link_libraries(${PROJECT_NAME} PRIVATE
