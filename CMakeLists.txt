@@ -30,11 +30,13 @@ add_subdirectory(third_party/SDL3_ttf EXCLUDE_FROM_ALL)
 
 add_executable(${PROJECT_NAME}
     src/main.c
+    src/framework/framework.c
+    src/module/view/view.c
 )
 
-include(src/file_embed/EmbedFile.cmake)
+include(src/framework/file_embed/EmbedFile.cmake)
 embed_file(${PROJECT_NAME} font "resource/font/NotoSansCJK-Regular.ttc")
-target_include_directories(${PROJECT_NAME} PRIVATE src/file_embed)
+target_include_directories(${PROJECT_NAME} PRIVATE src)
 
 # 静态链接 SDL3（符号打进可执行文件）
 target_link_libraries(${PROJECT_NAME} PRIVATE
